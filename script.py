@@ -2,6 +2,7 @@ import random
 import sys
 import csv
 
+
 class Polynomial:
     def __init__(self, a, b, c, d):
         self.genes = [a, b, c, d]
@@ -36,7 +37,13 @@ def sort_by_fitness(population):
 
 
 def get_input(address):
-    return [5, 9, 27, 71, 153]
+    points = []
+    with open(address) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for row in csv_reader:
+            for item in range(len(row)):
+                points.append(int(row[item]))
+    return points
 
 
 def generate_initial_population():
