@@ -1,6 +1,8 @@
 import random
 import sys
 import csv
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 class Polynomial:
@@ -42,7 +44,7 @@ def get_input(address):
         csv_reader = csv.reader(csv_file, delimiter=',')
         for row in csv_reader:
             for item in range(len(row)):
-                points.append(int(row[item]))
+                points.append(float(row[item]))
     return points
 
 
@@ -93,7 +95,7 @@ def crossover(parents):
 
 
 def mutation(mutant):
-    for index in range(4):
+    for index in range(len(mutant.genes)):
         rand = random.randint(1, 11)
         if rand % (1/mutation_rate) == 1:
             mutant.genes[index] += noise
@@ -107,6 +109,8 @@ def survival(population):
 
 
 def genetic(population):
+    best_fitness = []
+    worst_fitness = []
     for counter in range(number_of_generations):
         population = parent_selection(population)
         for i in range(0, population_size, 2):
@@ -115,8 +119,48 @@ def genetic(population):
             child.update_fitness()
             population.append(child)
         population = survival(population)
+        best_fitness.append(population[-1].fitness)
+        worst_fitness.append(population[0].fitness)
+    # draw_fitness(best_fitness, worst_fitness)
     population[population_size - 1].show_genes()
     population[population_size - 1].show_fitness()
+    return population
+
+
+def draw_fitness(best, worst):
+    xs = []
+    ybs = []
+    yws = []
+    for i in range(number_of_generations):
+        xs.append(i)
+        ybs.append(best[i])
+        yws.append(worst[i])
+    plt.scatter(xs, ybs)
+    plt.scatter(xs, yws)
+    plt.show()
+
+
+def draw_data():
+    xs = []
+    ys = []
+    best = individuals[-1]
+    a = best.genes[0]
+    b = best.genes[1]
+    c = best.genes[2]
+    d = best.genes[3]
+    x = np.linspace(0, 100, 256, endpoint=True)
+    y = (a * (x * x * x)) + (b * (x * x) + (c * x) + d)
+    plt.plot(x, y, '-g', label=r'$y')
+    axes = plt.gca()
+    axes.set_xlim([x.min(), x.max()])
+    axes.set_ylim([y.min(), y.max()])
+    plt.xlabel('x')
+    plt.ylabel('y')
+    for i in range(0, len(data)):
+        xs.append(i)
+        ys.append(data[i])
+    plt.scatter(xs, ys)
+    plt.show()
 
 
 number_of_generations = 5000
@@ -130,4 +174,5 @@ data = get_input(input_address)
 
 individuals = generate_initial_population()
 calculate_fitness(individuals)
-genetic(individuals)
+individuals = genetic(individuals)
+draw_data()
