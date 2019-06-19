@@ -3,7 +3,7 @@ import sys
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
-
+import math
 
 class Polynomial:
     def __init__(self, a, b, c, d):
@@ -108,9 +108,17 @@ def survival(population):
     return best_population
 
 
+def calculate_average(pop):
+    sum = 0
+    for person in pop:
+        sum += person.fitness
+    return sum/len(pop)
+
+
 def genetic(population):
     best_fitness = []
     worst_fitness = []
+    average_fitness = []
     for counter in range(number_of_generations):
         population = parent_selection(population)
         for i in range(0, population_size, 2):
@@ -121,22 +129,26 @@ def genetic(population):
         population = survival(population)
         best_fitness.append(population[-1].fitness)
         worst_fitness.append(population[0].fitness)
-    # draw_fitness(best_fitness, worst_fitness)
+        average_fitness.append(calculate_average(population))
+    draw_fitness(best_fitness, worst_fitness, average_fitness)
     population[population_size - 1].show_genes()
     population[population_size - 1].show_fitness()
     return population
 
 
-def draw_fitness(best, worst):
+def draw_fitness(best, worst, average):
     xs = []
     ybs = []
     yws = []
+    yas = []
     for i in range(number_of_generations):
         xs.append(i)
         ybs.append(best[i])
         yws.append(worst[i])
+        yas.append(average[i])
     plt.scatter(xs, ybs)
     plt.scatter(xs, yws)
+    plt.scatter(xs, yas)
     plt.show()
 
 
