@@ -98,7 +98,9 @@ def mutation(mutant):
     for index in range(len(mutant.genes)):
         rand = random.randint(1, 11)
         if rand % (1/mutation_rate) == 1:
-            mutant.genes[index] += noise
+            guass_noise = np.random.normal(0,noise,1)
+            # guass_noise = noise
+            mutant.genes[index] += guass_noise[0]
     return mutant
 
 
